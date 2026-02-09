@@ -154,22 +154,29 @@ initializeSocket(io, sessionMiddleware);
 const PORT = process.env.PORT || 3000;
 
 async function startServer() {
-    // Test database connection first
-    const dbConnected = await testConnection();
+    console.log('🔄 Connecting to database...');
+
+    // Test database connection with retries (5 attempts, 3 second delay)
+    const dbConnected = await testConnection(5, 3000);
 
     if (!dbConnected) {
-        console.error('❌ Cannot start server without database connection');
-        console.error('   Please ensure MySQL is running and check your .env configuration');
+        console.error('❌ Failed to connect to database after multiple attempts');
+        console.error('   Please check your environment variables:');
+        console.error('   - MYSQL_HOST or DB_HOST');
+        console.error('   - MYSQL_PORT or DB_PORT');
+        console.error('   - MYSQL_USER or DB_USER');
+        console.error('   - MYSQL_PASSWORD or DB_PASSWORD');
+        console.error('   - MYSQL_DATABASE or DB_NAME');
         process.exit(1);
     }
 
     // Start the server
-    server.listen(PORT, () => {
+    server.listen(PORT, '0.0.0.0', () => {
         console.log('');
         console.log('============================================');
         console.log('🚀 CHAT APPLICATION SERVER STARTED');
         console.log('============================================');
-        console.log(`📡 Server running on: http://localhost:${PORT}`);
+        console.log(`📡 Server running on port: ${PORT}`);
         console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
         console.log('============================================');
         console.log('');
