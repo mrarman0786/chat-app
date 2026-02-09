@@ -88,8 +88,8 @@ app.use(sessionMiddleware);
 // ============================================
 // STATIC FILE SERVING
 // ============================================
-// Serve files from the 'public' directory
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve files from the project root directory
+app.use(express.static(path.join(__dirname, '..')));
 
 // ============================================
 // API ROUTES
@@ -110,7 +110,7 @@ app.get('/', (req, res) => {
     if (req.session && req.session.userId) {
         return res.redirect('/chat.html');
     }
-    res.sendFile(path.join(__dirname, '../public/index.html'));
+    res.sendFile(path.join(__dirname, '../index.html'));
 });
 
 // Chat page (protected)
@@ -119,7 +119,7 @@ app.get('/chat.html', (req, res) => {
     if (!req.session || !req.session.userId) {
         return res.redirect('/');
     }
-    res.sendFile(path.join(__dirname, '../public/chat.html'));
+    res.sendFile(path.join(__dirname, '../chat.html'));
 });
 
 // ============================================
