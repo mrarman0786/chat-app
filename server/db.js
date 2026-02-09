@@ -3,8 +3,11 @@
  * DATABASE CONNECTION MODULE
  * ============================================
  * 
- * Supports both local development and Railway deployment.
- * Railway uses different environment variable names.
+ * Supports:
+ * - Local development (.env)
+ * - Railway (MYSQL_* variables)
+ * - PlanetScale (DATABASE_URL)
+ * - Render (DATABASE_URL)
  * 
  * ============================================
  */
@@ -14,11 +17,17 @@ require('dotenv').config();
 
 /**
  * Get database configuration
- * Supports both local (.env) and Railway environment variables
+ * Supports multiple deployment platforms
  */
 function getDbConfig() {
+    // Check for DATABASE_URL (PlanetScale/Render format)
+    if (process.env.DATABASE_URL) {
+        console.log('📡 Using DATABASE_URL connection string');
+        return process.env.DATABASE_URL;
+    }
+
+    // Railway or local development
     return {
-        // Railway uses MYSQL_* variables, local uses DB_*
         host: process.env.MYSQL_HOST || process.env.MYSQLHOST || process.env.DB_HOST || 'localhost',
         port: parseInt(process.env.MYSQL_PORT || process.env.MYSQLPORT || process.env.DB_PORT || '3306'),
         user: process.env.MYSQL_USER || process.env.MYSQLUSER || process.env.DB_USER || 'root',
@@ -29,30 +38,24 @@ function getDbConfig() {
         waitForConnections: true,
         connectionLimit: 10,
         queueLimit: 0,
-
-        // Connection timeout
         connectTimeout: 30000,
-
-        // Enable prepared statements
-        namedPlaceholders: true,
     };
 }
 
 // Create connection pool
-const pool = mysql.createPool(getDbConfig());
+const config = getDbConfig();
+const pool = typeof config === 'string'
+    ? mysql.createPool(config)
+    : mysql.createPool(config);
 
 /**
  * Test database connection with retry logic
  */
 async function testConnection(retries = 5, delay = 3000) {
-    const config = getDbConfig();
-
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
             const connection = await pool.getConnection();
             console.log('✅ Database connected successfully!');
-            console.log(`   📁 Database: ${config.database}`);
-            console.log(`   🖥️  Host: ${config.host}:${config.port}`);
             connection.release();
             return true;
         } catch (error) {
@@ -67,7 +70,6 @@ async function testConnection(retries = 5, delay = 3000) {
     }
 
     console.error('❌ All database connection attempts failed');
-    console.error('   Please check your database configuration');
     return false;
 }
 
