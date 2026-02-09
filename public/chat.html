@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Real-Time Chat Application - Chat Room">
+
+    <title>ChatApp - Chat Room</title>
+
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="chat-page">
+    <!-- 
+    ============================================
+    CHAT PAGE
+    ============================================
+    Real-time chat interface with Socket.IO
+    
+    VIVA EXPLANATION:
+    - Messages display in scrollable container
+    - Socket.IO handles real-time updates
+    - Auto-scroll to latest message
+    - Typing indicators show who's typing
+    ============================================
+    -->
+
+    <!-- Chat Container -->
+    <div class="chat-container">
+
+        <!-- Header -->
+        <header class="chat-header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">💬</span>
+                    <h1>ChatApp</h1>
+                </div>
+            </div>
+
+            <div class="header-center">
+                <div class="connection-status" id="connection-status">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Connecting...</span>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="user-info">
+                    <span class="user-icon">👤</span>
+                    <span class="username" id="current-username">Loading...</span>
+                </div>
+                <button class="logout-btn" id="logout-btn" title="Logout">
+                    <span>Logout</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Chat Area -->
+        <main class="chat-main">
+            <!-- Messages Container -->
+            <div class="messages-container" id="messages-container">
+                <!-- System message for welcome -->
+                <div class="system-message" id="welcome-message">
+                    <p>Welcome to the chat room! Messages will appear here.</p>
+                </div>
+
+                <!-- Messages will be dynamically added here -->
+            </div>
+
+            <!-- Typing Indicator -->
+            <div class="typing-indicator hidden" id="typing-indicator">
+                <span class="typing-text"></span>
+                <span class="typing-dots">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </span>
+            </div>
+        </main>
+
+        <!-- Message Input Area -->
+        <footer class="chat-footer">
+            <form class="message-form" id="message-form">
+                <div class="input-wrapper">
+                    <input type="text" id="message-input" placeholder="Type a message..." autocomplete="off"
+                        maxlength="1000">
+                </div>
+                <button type="submit" class="send-btn" id="send-btn" title="Send message">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="24"
+                        height="24">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z" />
+                    </svg>
+                </button>
+            </form>
+        </footer>
+
+    </div>
+
+    <!-- Notification Sound (optional) -->
+    <audio id="notification-sound" preload="auto">
+        <!-- Add notification sound file if needed -->
+    </audio>
+
+    <!-- Socket.IO Client Library -->
+    <script src="/socket.io/socket.io.js"></script>
+
+    <!-- Chat JavaScript -->
+    <script src="js/chat.js"></script>
+</body>
+
+</html>
